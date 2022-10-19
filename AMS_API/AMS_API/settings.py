@@ -47,6 +47,7 @@ DATABASES = {
 }
 
 ## Authentication
+AUTH_USER_MODEL = "core.CustomUser"
 
 # Rest Framework
 REST_FRAMEWORK = {
@@ -68,6 +69,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "core.apps.CoreConfig",
 ]
 
 MIDDLEWARE = [
