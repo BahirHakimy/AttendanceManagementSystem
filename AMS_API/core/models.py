@@ -82,10 +82,10 @@ class Class(models.Model):
     def __str__(self) -> str:
         return f"{self.semester} Semester {self.department}"
 
-    def get_attendance_form(self,subject):
-        form = Attendance.objects.get(parent_class=self,subject=subject)
-        date = datetime.now()
-        self.timetable.
+    # def get_attendance_form(self,subject):
+    #     form = Attendance.objects.get(parent_class=self,subject=subject)
+    #     date = datetime.now()
+    #     self.timetable.
 
 
 class Subject(models.Model):
