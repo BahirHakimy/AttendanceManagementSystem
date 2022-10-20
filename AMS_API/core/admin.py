@@ -9,6 +9,9 @@ from .models import (
     Class,
     AttendanceForm,
     Attendance,
+    TimeTable,
+    DailyTimeTable,
+    TimeTableObject,
 )
 
 
@@ -41,4 +44,7 @@ admin.site.register(Subject)
 admin.site.register(Class)
 admin.site.register(AttendanceForm)
 admin.site.register(Attendance)
+admin.site.register(TimeTable)
+admin.site.register(DailyTimeTable)
+admin.site.register(TimeTableObject)
 admin.site.unregister(Group)

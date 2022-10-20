@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -20,6 +21,14 @@ SEMESTERS = (
     ("6th", "Sixth"),
     ("7th", "Seventh"),
     ("8th", "Eighth"),
+)
+WEEK_DAYS = (
+    ("5", "Saturday"),
+    ("6", "Sunday"),
+    ("0", "Monday"),
+    ("1", "Tuesday"),
+    ("2", "Wednesday"),
+    ("3", "Thursday"),
 )
 
 
@@ -73,6 +82,11 @@ class Class(models.Model):
     def __str__(self) -> str:
         return f"{self.semester} Semester {self.department}"
 
+    def get_attendance_form(self,subject):
+        form = Attendance.objects.get(parent_class=self,subject=subject)
+        date = datetime.now()
+        self.timetable.
+
 
 class Subject(models.Model):
     title = models.CharField(max_length=55)
@@ -88,6 +102,31 @@ class Subject(models.Model):
         ].classes.all()
 
 
+class TimeTable(models.Model):
+    parent_class = models.OneToOneField(Class, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return self.parent_class.__str__()
+
+
+class DailyTimeTable(models.Model):
+    timetable = models.ForeignKey(TimeTable, on_delete=models.CASCADE)
+    day = models.CharField(max_length=1, choices=WEEK_DAYS)
+
+    def __str__(self) -> str:
+        return self.get_day_display()
+
+
+class TimeTableObject(models.Model):
+    daily_table = models.ForeignKey(DailyTimeTable, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self) -> str:
+        return self.subject.title
+
+
 class AttendanceForm(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     parent_class = models.ForeignKey(Class, on_delete=models.CASCADE)
@@ -101,7 +140,7 @@ class Attendance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     form = models.ForeignKey(AttendanceForm, on_delete=models.CASCADE)
     date = models.DateField()
-    is_present = models.BooleanField()
+    is_present = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.student} {self.date} {self.is_present}"

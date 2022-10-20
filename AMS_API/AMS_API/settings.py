@@ -21,7 +21,7 @@ WSGI_APPLICATION = "AMS_API.wsgi.application"
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kabul"
 
 USE_I18N = True
 
