@@ -35,7 +35,7 @@ class CustomUser(AbstractUser):
             return {"role": "undefined"}
 
 class Student(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
     father_name = models.CharField(max_length=20)
     gender = models.CharField(max_length=6, choices=GENDER_CHOISES)
@@ -44,7 +44,7 @@ class Student(models.Model):
 
 
 class Teacher(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length= 20)
     father_name = models.CharField(max_length=20)
     gender = models.CharField(max_length=6, choices=GENDER_CHOISES)

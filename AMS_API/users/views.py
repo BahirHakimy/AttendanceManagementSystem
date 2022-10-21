@@ -1,15 +1,14 @@
 import json
 from django.shortcuts import render
-from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from AMS_API.users.serializers import StudentSerializer, UserSerializer
+from .serializers import StudentSerializer, UserSerializer
 
 # Create your views here.
 
 @api_view(["POST"])
-def add (request):
+def addStudent(request):
     data = (request.data)
     data.update({'username': data['name']})
     print(data)
@@ -17,7 +16,7 @@ def add (request):
     serializerStudent = StudentSerializer(data=data)
     if serializerUser.is_valid() and serializerStudent.is_valid():
         serializerUser.save()
-        user = User.objects.get(username=serializerUser.data['username'])
+        user = serializerUser['id']
         data.update({'user': user.id})
         if serializerStudent.is_valid():
             serializerStudent.save()
