@@ -47,7 +47,7 @@ DATABASES = {
 }
 
 ## Authentication
-
+AUTH_USER_MODEL = "users.CustomUser"
 # Rest Framework
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
