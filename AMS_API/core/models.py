@@ -42,6 +42,7 @@ class CustomUser(AbstractUser):
     gender = models.CharField(max_length=2, choices=GENDERS)
     age = models.IntegerField(validators=[validate_age], null=True, blank=True)
     phone = models.CharField(max_length=10, null=True, blank=True)
+    father_name = models.CharField(max_length=55, blank=True)
     REQUIRED_FIELDS = ["email"]
 
     def __str__(self) -> str:
