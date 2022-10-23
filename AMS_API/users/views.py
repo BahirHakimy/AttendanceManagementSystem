@@ -48,32 +48,6 @@ def standardizedErrors(serializer):
     return Response({"errors": standerdizedErrors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# The add Student should return
-{
-    "data": {
-        "class": {
-            "name": "String",
-            "floor": "int",
-            "semester": "int",
-            "department": "String",
-            "room_no": "int",
-        },
-        "user": {
-            "username": "String",
-            "email": "unique -email",
-            "first_name": "alpha String",
-            "father_name": "alpha String",
-            "gender": "M or F",
-            "birth": "DD-MM-YYYY",
-            "phone": "unique-phone",
-            "password": "String",
-        },
-    }
-}
-# for above data the every student should be in class
-# so add the class data or view first
-
-
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def getUser(request):
