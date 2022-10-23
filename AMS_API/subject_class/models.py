@@ -13,6 +13,7 @@ WEEK_DAYS = (
     ("3", "Thursday"),
 )
 
+
 class Classes(models.Model):
     name = models.CharField(max_length=20, unique=True)
     floor = models.IntegerField()
@@ -23,9 +24,11 @@ class Classes(models.Model):
     gender = models.CharField(max_length=2, choices=GENDER_CHOISES)
 
     def __str__(self) -> str:
-        split_department = self.department.split(' ')
+        split_department = self.department.split(" ")
         short_department = split_department[0][0] + split_department[1][0]
-        class_name = short_department + "-"  + self.class_start_date + "-" + self.gender
+        class_name = (
+            short_department + "-" + str(self.class_start_date) + "-" + self.gender
+        )
         return class_name
 
 
@@ -35,17 +38,21 @@ class Subject(models.Model):
     def __str__(self) -> str:
         return self.title
 
+
 class SubjectClassTeacherInfo(models.Model):
     classes = models.ForeignKey(Classes, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     teacher = models.ForeignKey("users.Teacher", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return self.classes + '-' + self.subject + '-' + self.teacher
+        return self.classes + "-" + self.subject + "-" + self.teacher
+
 
 class Attendance(models.Model):
     student = models.ForeignKey("users.Student", on_delete=models.CASCADE)
-    subject_class_teacher_info = models.ForeignKey(SubjectClassTeacherInfo, on_delete=models.CASCADE)
+    subject_class_teacher_info = models.ForeignKey(
+        SubjectClassTeacherInfo, on_delete=models.CASCADE
+    )
     isPresent = models.BooleanField()
     date = models.DateField()
     cridet = models.IntegerField(choices=CRIDET_CHOISES)
@@ -53,8 +60,10 @@ class Attendance(models.Model):
     def __str__(self) -> str:
         return super().__str__()
 
+
 class TimeTable(models.Model):
-    subject_class_teacher_info = models.ForeignKey(SubjectClassTeacherInfo, on_delete=models.CASCADE)
+    subject_class_teacher_info = models.ForeignKey(
+        SubjectClassTeacherInfo, on_delete=models.CASCADE
+    )
     Day_of_week = models.CharField(max_length=1, choices=WEEK_DAYS)
     cridet = models.IntegerField(choices=CRIDET_CHOISES)
-
