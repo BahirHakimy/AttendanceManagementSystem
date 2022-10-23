@@ -43,7 +43,13 @@ class Student(models.Model):
     father_name = models.CharField(max_length=55)
     parent_class = models.ForeignKey(Classes, on_delete=models.CASCADE)
 
+    def __str__(self) -> str:
+        return self.user.get_full_name() + " son of " + self.father_name
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     degree = models.CharField(max_length=3, choices=DEEGREES)
+
+    def __str__(self) -> str:
+        return self.get_degree_display() + " " + self.user.get_full_name()

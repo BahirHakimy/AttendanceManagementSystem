@@ -1,14 +1,17 @@
-from functools import partial
 import string, random
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .models import Student, Teacher, CustomUser
+from .models import Student, Teacher
 from .serializers import (
     StudentCreateSerializer,
     StudentDetailSerializer,
     StudentSerializer,
+    TeacherCreateSerializer,
+    TeacherDetailSerializer,
+    TeacherSerializer,
     UserCreateSerializer,
     UserSerializer,
 )
@@ -43,6 +46,44 @@ def standardizedErrors(serializer):
         else:
             standerdizedErrors[error] = serializer.errors[error][0].__str__()
     return Response({"errors": standerdizedErrors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def getUser(request):
+    User = get_user_model()
+    try:
+        user_id = request.data["id"]
+        try:
+            user = User.objects.get(id=user_id)
+            user_type = user.get_user_type()
+            serializer = None
+            if user_type["role"] == "admin":
+                serializer = UserSerializer(user, many=False)
+            elif user_type["role"] == "teacher":
+                serializer = TeacherSerializer(user.teacher, many=False)
+            elif user_type["role"] == "student":
+                serializer = StudentSerializer(user.student, many=False)
+            else:
+                return Response(
+                    "User with the given id doesn't has a role",
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            return Response(
+                {"role": user_type["role"], "data": serializer.data},
+                status=status.HTTP_200_OK,
+            )
+
+        except User.DoesNotExist:
+            return Response(
+                {"detail": f"User with id={user_id} not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+    except KeyError:
+        return Response(
+            {"detail": "You should include the [id] of user in your request"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 @api_view(["GET"])
@@ -97,12 +138,12 @@ def updateStudent(request):
             return Response(data, status=status.HTTP_202_ACCEPTED)
         except Student.DoesNotExist:
             return Response(
-                {"message": f"Student with id={id} not found"},
+                {"detail": f"Student with id={id} not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
     except KeyError:
         return Response(
-            {"message": "You should include the [id] of student you want to update"},
+            {"detail": "You should include the [id] of student you want to update"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -112,19 +153,19 @@ def updateStudent(request):
 def deleteStudent(request, pk):
     if not pk:
         return Response(
-            {"message": "You should include the [id] of student you want to update"},
+            {"detail": "You should include the [id] of student you want to update"},
             status=status.HTTP_400_BAD_REQUEST,
         )
     try:
         student = Student.objects.get(id=pk)
         student.user.delete()
         return Response(
-            {"message": f"Student with id={pk} deleted successfully"},
+            {"detail": f"Student with id={pk} deleted successfully"},
             status=status.HTTP_202_ACCEPTED,
         )
     except Student.DoesNotExist:
         return Response(
-            {"message": f"Student with id={pk} not found"},
+            {"detail": f"Student with id={pk} not found"},
             status=status.HTTP_404_NOT_FOUND,
         )
 
@@ -132,20 +173,128 @@ def deleteStudent(request, pk):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def searchStudent(request):
+    User = get_user_model()
     SEARCH_COLUMNS = ["username", "first_name", "last_name", "father_name"]
     try:
         search = request.data["search"]
         search_by = request.data["searchBy"]
         if not SEARCH_COLUMNS.__contains__(search_by):
             return Response(
-                {"message": f"[searchBy] should be one of {str(SEARCH_COLUMNS)}"},
+                {"detail": f"[searchBy] should be one of {str(SEARCH_COLUMNS)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        users = None
+        students = None
+        if search_by == "father_name":
+            students = Student.objects.filter(father_name__iexact=search)
+        elif search_by == "username":
+            users = User.objects.filter(username__iexact=search)
+        elif search_by == "first_name":
+            users = User.objects.filter(first_name__iexact=search)
+        else:
+            users = User.objects.filter(last_name__iexact=search)
+
+        if students and len(students) > 0:
+            serializer = StudentSerializer(students, many=True)
+            return Response({"students": serializer.data}, status=status.HTTP_200_OK)
+        elif users and len(users) > 0:
+            data = []
+            for user in users:
+                if hasattr(user, "student"):
+                    serializer = StudentSerializer(user.student, many=False)
+                    data.append(serializer.data)
+            return Response({"student": data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"student": []}, status=status.HTTP_200_OK)
 
     except KeyError:
         return Response(
             {
-                "message": "You should include the [search] and [searchBy] in your request body"
+                "detail": "You should include the [search] and [searchBy] in your request body"
             },
             status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def getTeachers(request):
+    teachers = Teacher.objects.all()
+    serializer = TeacherSerializer(teachers, many=True)
+    return Response({"teachers": serializer.data}, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def addTeacher(request):
+    username, password = generateUsernameAndPassword(request.data)
+    request.data.update({"username": username, "password": password})
+    userSerializer = UserCreateSerializer(data=request.data)
+    if not userSerializer.is_valid():
+        return standardizedErrors(userSerializer)
+
+    user = userSerializer.save()
+    request.data.update({"user": user.id})
+    teacherSerializer = TeacherCreateSerializer(data=request.data, many=False)
+    if not teacherSerializer.is_valid():
+        user.delete()
+        return standardizedErrors(teacherSerializer)
+    teacher = teacherSerializer.save()
+    data = TeacherDetailSerializer(teacher, many=False).data.copy()
+    data["user"]["password"] = request.data["password"]
+    return Response(data, status=status.HTTP_201_CREATED)
+
+
+@api_view(["PATCH", "PUT"])
+@permission_classes([AllowAny])
+def updateTeacher(request):
+    try:
+        teacher_id = request.data["id"]
+        try:
+            teacher = Teacher.objects.get(id=teacher_id)
+            userSerializer = UserSerializer(
+                teacher.user, data=request.data, partial=True
+            )
+            if not userSerializer.is_valid():
+                return standardizedErrors(userSerializer)
+            teacherSerializer = TeacherCreateSerializer(
+                teacher, data=request.data, partial=True
+            )
+            if not teacherSerializer.is_valid():
+                return standardizedErrors(teacherSerializer)
+            userSerializer.save()
+            teacherSerializer.save()
+            data = TeacherSerializer(teacher, many=False).data
+            return Response(data, status=status.HTTP_202_ACCEPTED)
+        except Teacher.DoesNotExist:
+            return Response(
+                {"detail": f"Teacher with id={teacher_id} not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+    except KeyError:
+        return Response(
+            {"detail": "You should include the [id] of teacher you want to update"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+@api_view(["DELETE"])
+@permission_classes([AllowAny])
+def deleteTeacher(request, pk):
+    if not pk:
+        return Response(
+            {"detail": "You should include the [id] of teacher you want to update"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    try:
+        teacher = Teacher.objects.get(id=pk)
+        teacher.user.delete()
+        return Response(
+            {"detail": f"Teacher with id={pk} deleted successfully"},
+            status=status.HTTP_202_ACCEPTED,
+        )
+    except Teacher.DoesNotExist:
+        return Response(
+            {"detail": f"Teacher with id={pk} not found"},
+            status=status.HTTP_404_NOT_FOUND,
         )

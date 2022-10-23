@@ -1,10 +1,6 @@
-from dataclasses import fields
-import random
-import string
-from math import floor
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Student, Teacher
+from .models import Student, Teacher, Teacher
 
 User = get_user_model()
 
@@ -12,6 +8,7 @@ User = get_user_model()
 class UserCreateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=55, required=False)
     password = serializers.CharField(min_length=8, max_length=55, required=False)
+    gender = serializers.ReadOnlyField(source="get_gender_display")
 
     class Meta:
         model = User
@@ -26,14 +23,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "phone",
             "age",
         ]
-
-    def validate(self, attrs):
-        try:
-            attrs["first_name"]
-            attrs["last_name"]
-            return super().validate(attrs)
-        except KeyError:
-            raise serializers.ValidationError("first_name and last_name are required")
 
     #      user = {"email":"ahmad@abc.com","gender","M","first_name":"ahmad","last_name":"ahmadi","phone":"0789898989","age":"20"}
     def create(self, validated_data):
@@ -53,6 +42,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     fullname = serializers.ReadOnlyField(source="get_full_name")
+    gender = serializers.ReadOnlyField(source="get_gender_display")
 
     class Meta:
         model = User
@@ -95,6 +85,24 @@ class StudentDetailSerializer(serializers.ModelSerializer):
 class TeacherSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(many=False)
+    degree = serializers.ReadOnlyField(source="get_degree_display")
+
+    class Meta:
+        model = Teacher
+        fields = ["user", "degree"]
+
+
+class TeacherCreateSerializer(serializers.ModelSerializer):
+    degree = serializers.ReadOnlyField(source="get_degree_display")
+
+    class Meta:
+        model = Teacher
+        fields = ["user", "degree"]
+
+
+class TeacherDetailSerializer(serializers.ModelSerializer):
+    degree = serializers.ReadOnlyField(source="get_degree_display")
+    user = UserCreateSerializer(many=False)
 
     class Meta:
         model = Teacher
