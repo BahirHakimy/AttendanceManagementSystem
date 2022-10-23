@@ -47,7 +47,7 @@ DATABASES = {
 }
 
 ## Authentication
-
+AUTH_USER_MODEL = "users.CustomUser"
 # Rest Framework
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -68,6 +68,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "users.apps.UsersConfig",
+    "subject_class.apps.SubjectClassConfig",
 ]
 
 MIDDLEWARE = [
