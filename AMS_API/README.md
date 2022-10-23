@@ -46,7 +46,7 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
 
 [api/token/](#1-hostaddressportapiauthtoken)<br>
 [api/token/refresh/](#2-hostaddressportapiauthtokenrefresh)<br>
-[api/users/get-users/](#3-hostaddressportapicoreget-user)<br>
+[api/users/get-user/](#3-hostaddressportapicoreget-user)<br>
 [api/users/get-students/](#1-hostaddressportapiusersget-students)<br>
 [api/users/add-student/](#2-hostaddressportapiusersadd-student)<br>
 [api/users/update-student/](#3-hostaddressportapiusersupdate-student)<br>
