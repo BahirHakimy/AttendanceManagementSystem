@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Classes
+from .models import Classes, Subject
 
 class ClassesSerializer(serializers.ModelSerializer):
     class Meta: 
@@ -12,4 +12,9 @@ class ClassesSerializer(serializers.ModelSerializer):
         short_department = split_department[0][0] + split_department[1][0]
         validated_data["name"] = short_department + "-"  + validated_data["class_start_date"] + "-" + validated_data["gender"]
         return super().create(validated_data)
+
+class SubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ['title']
 
