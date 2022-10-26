@@ -42,6 +42,7 @@ class Student(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     father_name = models.CharField(max_length=55)
     parent_class = models.ForeignKey(Classes, on_delete=models.CASCADE)
+    profile_pic = models.ImageField(upload_to="students", blank=True, null=True)
 
     def __str__(self) -> str:
         return self.user.get_full_name() + " son of " + self.father_name
@@ -50,6 +51,7 @@ class Student(models.Model):
 class Teacher(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     degree = models.CharField(max_length=3, choices=DEEGREES)
+    profile_pic = models.ImageField(upload_to="teachers", blank=True, null=True)
 
     def __str__(self) -> str:
         return self.get_degree_display() + " " + self.user.get_full_name()

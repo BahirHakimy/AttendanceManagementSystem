@@ -8,7 +8,6 @@ User = get_user_model()
 class UserCreateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=55, required=False)
     password = serializers.CharField(min_length=8, max_length=55, required=False)
-    gender = serializers.ReadOnlyField(source="get_gender_display")
 
     class Meta:
         model = User
@@ -62,48 +61,54 @@ class UserSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(many=False)
+    profile_pic = serializers.ImageField(use_url=True)
 
     class Meta:
         model = Student
-        fields = ["user", "father_name", "parent_class"]
+        fields = ["user", "father_name", "parent_class", "profile_pic"]
 
 
 class StudentCreateSerializer(serializers.ModelSerializer):
+    profile_pic = serializers.ImageField(use_url=True)
+
     class Meta:
         model = Student
-        fields = ["user", "father_name", "parent_class"]
+        fields = ["user", "father_name", "parent_class", "profile_pic"]
 
 
 class StudentDetailSerializer(serializers.ModelSerializer):
-    user = UserCreateSerializer(many=False)
+    user = UserSerializer(many=False)
+    profile_pic = serializers.ImageField(use_url=True)
 
     class Meta:
         model = Student
-        fields = ["user", "father_name", "parent_class"]
+        fields = ["user", "father_name", "parent_class", "profile_pic"]
 
 
 class TeacherSerializer(serializers.ModelSerializer):
 
     user = UserSerializer(many=False)
     degree = serializers.ReadOnlyField(source="get_degree_display")
+    profile_pic = serializers.ImageField(use_url=True)
 
     class Meta:
         model = Teacher
-        fields = ["user", "degree"]
+        fields = ["user", "degree", "profile_pic"]
 
 
 class TeacherCreateSerializer(serializers.ModelSerializer):
-    degree = serializers.ReadOnlyField(source="get_degree_display")
+    profile_pic = serializers.ImageField(use_url=True)
 
     class Meta:
         model = Teacher
-        fields = ["user", "degree"]
+        fields = ["user", "degree", "profile_pic"]
 
 
 class TeacherDetailSerializer(serializers.ModelSerializer):
     degree = serializers.ReadOnlyField(source="get_degree_display")
-    user = UserCreateSerializer(many=False)
+    user = UserSerializer(many=False)
+    profile_pic = serializers.ImageField(use_url=True)
 
     class Meta:
         model = Teacher
-        fields = ["user", "degree"]
+        fields = ["user", "degree", "profile_pic"]
