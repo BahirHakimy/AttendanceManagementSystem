@@ -2,8 +2,10 @@ import string, random
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+
 from .models import Student, Teacher
 from .serializers import (
     StudentCreateSerializer,
@@ -61,16 +63,22 @@ def getUser(request):
             if user_type["role"] == "admin":
                 serializer = UserSerializer(user, many=False)
             elif user_type["role"] == "teacher":
-                serializer = TeacherSerializer(user.teacher, many=False)
+                serializer = TeacherSerializer(
+                    user.teacher, many=False, context={"request": request}
+                )
             elif user_type["role"] == "student":
-                serializer = StudentSerializer(user.student, many=False)
+                serializer = StudentSerializer(
+                    user.student, many=False, context={"request": request}
+                )
             else:
                 return Response(
                     "User with the given id doesn't has a role",
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            data = serializer.data.copy()
+            data.update({"role": user_type["role"]})
             return Response(
-                {"role": user_type["role"], "data": serializer.data},
+                data,
                 status=status.HTTP_200_OK,
             )
 
@@ -95,27 +103,39 @@ def getStudents(request):
 
 
 @api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
 @permission_classes([AllowAny])
 def addStudent(request):
+
     username, password = generateUsernameAndPassword(request.data)
+    request.data._mutable = True
     request.data.update({"username": username, "password": password})
-    userSerializer = UserCreateSerializer(data=request.data)
+
+    userSerializer = UserCreateSerializer(data=request.data, many=False)
     if not userSerializer.is_valid():
         return standardizedErrors(userSerializer)
-
     user = userSerializer.save()
+
     request.data.update({"user": user.id})
+    request.data._mutable = False
+
     studentSerializer = StudentCreateSerializer(data=request.data, many=False)
     if not studentSerializer.is_valid():
         user.delete()
         return standardizedErrors(studentSerializer)
     student = studentSerializer.save()
-    data = StudentDetailSerializer(student, many=False).data.copy()
+
+    data = StudentDetailSerializer(
+        student, many=False, context={"request": request}
+    ).data.copy()
     data["user"]["password"] = request.data["password"]
+
     return Response(data, status=status.HTTP_201_CREATED)
+    # return Response({}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["PATCH", "PUT"])
+@parser_classes([MultiPartParser, FormParser])
 @permission_classes([AllowAny])
 def updateStudent(request):
     try:
@@ -226,8 +246,10 @@ def getTeachers(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@parser_classes([MultiPartParser, FormParser])
 def addTeacher(request):
     username, password = generateUsernameAndPassword(request.data)
+    request.data._mutable = True
     request.data.update({"username": username, "password": password})
     userSerializer = UserCreateSerializer(data=request.data)
     if not userSerializer.is_valid():
@@ -235,17 +257,24 @@ def addTeacher(request):
 
     user = userSerializer.save()
     request.data.update({"user": user.id})
-    teacherSerializer = TeacherCreateSerializer(data=request.data, many=False)
+    request.data._mutable = False
+    teacherSerializer = TeacherCreateSerializer(
+        data=request.data,
+        many=False,
+    )
     if not teacherSerializer.is_valid():
         user.delete()
         return standardizedErrors(teacherSerializer)
     teacher = teacherSerializer.save()
-    data = TeacherDetailSerializer(teacher, many=False).data.copy()
+    data = TeacherDetailSerializer(
+        teacher, many=False, context={"request": request}
+    ).data.copy()
     data["user"]["password"] = request.data["password"]
     return Response(data, status=status.HTTP_201_CREATED)
 
 
 @api_view(["PATCH", "PUT"])
+@parser_classes([MultiPartParser, FormParser])
 @permission_classes([AllowAny])
 def updateTeacher(request):
     try:

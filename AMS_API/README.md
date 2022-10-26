@@ -133,25 +133,20 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
 - `Success Response`:
 - ```json
   {
-    "id": 37,
-    "title": "Dell Xps 600 Gaming",
-    "type": "Laptop",
-    "vendor": "DELL",
-    "model": "2016",
-    "cpu": "Intel core i7 10th genration 3.5GHz upto 5GHz",
-    "gpu": "Nvidea Geforce Rtx 3080 8GB",
-    "memory": "16GB",
-    "storage": "256GB",
-    "storageType": "SSD",
-    "os": "Windows 10 Pro",
-    "price": "1500.00",
-    "description": "Gaming laptop",
-    "images": [
-      {
-        "image": "image url",
-        "thumbnail": "thumbnail url"
-      }
-    ]
+    "user": {
+      "id": 27,
+      "username": "ahmahm95#",
+      "email": "aafsdfad@a33bc33.com",
+      "gender": "Male",
+      "phone": "0789898989",
+      "age": 20,
+      "first_name": "ahmad",
+      "last_name": "ahmadi",
+      "fullname": "ahmad ahmadi"
+    },
+    "degree": "Doctorate",
+    "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg",
+    "role": "teacher"
   }
   ```
 
@@ -198,7 +193,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
         "fullname": "ahmad ahmadi"
       },
       "father_name": "Karim",
-      "parent_class": 1
+      "parent_class": 1,
+      "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg"
     },
     {
       "user": {
@@ -213,7 +209,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
         "fullname": "jalil ahmadi"
       },
       "father_name": "Kabir",
-      "parent_class": 1
+      "parent_class": 1,
+      "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg"
     }
   ]
   ```
@@ -222,7 +219,7 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
 
 - `Method` ![POST](https://img.shields.io/badge/POST-%23FF9900.svg)
 - `IsProtected` : Yes `You should provide an admin user access token to access the endpoint
-- `Accepting Data Type`:"application/json"
+- `Accepting Data Type`:"multipart/formdata"
 - `Expecting inputs`:
 - ```json
   {
@@ -233,7 +230,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
     "father_name": "Jamil",
     "phone": "10 digit phone number",
     "age": "a number between 18 and 99",
-    "class": "a valid existent class id"
+    "class": "a valid existent class id",
+    "profile_pic": "a valid image"
   }
   ```
 
@@ -253,7 +251,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
       "age": 20
     },
     "father_name": "Karim",
-    "parent_class": 1
+    "parent_class": 1,
+    "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg"
   }
   ```
 
@@ -273,6 +272,7 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
 
 - `Method` ![PUT](https://img.shields.io/badge/PUT-%23039BE5.svg)
 - `IsProtected` : Yes `You should provide an admin user access token to access the endpoint`
+- `Accepting Data Type`:"multipart/formdata"
 - `Expecting inputs`:
 - ```json
   {
@@ -368,7 +368,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
           "fullname": "ahmad ahmadi"
         },
         "father_name": "Karim",
-        "parent_class": 1
+        "parent_class": 1,
+        "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg"
       },
       {
         "user": {
@@ -383,7 +384,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
           "fullname": "jalil ahmadi"
         },
         "father_name": "Kabir",
-        "parent_class": 1
+        "parent_class": 1,
+        "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg"
       }
     ]
   }
@@ -426,7 +428,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
         "last_name": "ahmadi",
         "fullname": "ahmad ahmadi"
       },
-      "degree": "Master"
+      "degree": "Master",
+      "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg"
     },
     {
       "user": {
@@ -440,7 +443,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
         "last_name": "ahmadi",
         "fullname": "jalil ahmadi"
       },
-      "degree": "Doctorate"
+      "degree": "Doctorate",
+      "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg"
     }
   ]
   ```
@@ -449,7 +453,7 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
 
 - `Method` ![POST](https://img.shields.io/badge/POST-%23FF9900.svg)
 - `IsProtected` : Yes `You should provide an admin user access token to access the endpoint
-- `Accepting Data Type`:"application/json"
+- `Accepting Data Type`:"multipart/formdata"
 - `Expecting inputs`:
 - ```json
   {
@@ -460,7 +464,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
     "father_name": "Jamil",
     "phone": "10 digit phone number",
     "age": "a number between 18 and 99",
-    "degree": "[BCH] for Bachelor [MST] for Master [PHD] for Doctorate"
+    "degree": "[BCH] for Bachelor [MST] for Master [PHD] for Doctorate",
+    "profile_pic": "a valid image"
   }
   ```
 
@@ -479,7 +484,8 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
       "phone": "0789898989",
       "age": 20
     },
-    "degree": "Bachelor"
+    "degree": "Bachelor",
+    "profile_pic": "http://127.0.0.1:8000/media/teachers/dfff_LuH8uwO.jpg"
   }
   ```
 
@@ -499,6 +505,7 @@ This will start the server at [127.0.0.1:8000/](http://127.0.0.1:8000/) address
 
 - `Method` ![PUT](https://img.shields.io/badge/PUT-%23039BE5.svg)
 - `IsProtected` : Yes `You should provide an admin user access token to access the endpoint`
+- `Accepting Data Type`:"multipart/formdata"
 - `Expecting inputs`:
 - ```json
   {
