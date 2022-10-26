@@ -1,10 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-
+import classIcon from "../public/Classroom.svg";
+import subjectIcon from "../public/book.svg";
+import teacherIcon from "../public/teacher.svg";
+import studentIcon from "../public/student.svg";
+import ku4Admin from "../public/ku4Admin.svg";
 
 const Navbar = () => {
   return (
-    <div className=" pt-10 bg-darkShadeCyan flex flex-col gap-5 w-48 h-screen items-center  ">
+    <div className=" pt-10 bg-darkShadeCyan flex flex-col gap-6 w-48 h-screen items-center  ">
       {/*logo*/}
       <div className="bg-white p-2 rounded-lg mb-4">
         <Image src={ku4Admin} height={30} width={90} alt="logo" />

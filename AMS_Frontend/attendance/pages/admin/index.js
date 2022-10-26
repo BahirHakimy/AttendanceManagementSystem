@@ -1,18 +1,16 @@
-import Link from "next/link";
-import Image from "next/image";
-import classIcon from "../../public/Classroom.svg";
-import subjectIcon from "../../public/book.svg";
-import teacherIcon from "../../public/teacher.svg";
-import studentIcon from "../../public/student.svg";
-import ku4Admin from "../../public/ku4Admin.svg";
+
+import Navbar from "../../components/navbar";
+import DisplayPanel from "../../components/adminDisplayPanel";
+
+
 
 const Admin = () => {
-  
-
   return (
-    <div className="bg-white h-screen">
-   
+    <div className="bg-slate-50 h-screen flex">
+      {/* navbar */}
+      <Navbar />
       {/* display panel */}
+      <DisplayPanel/>
     </div>
   );
 };
