@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .serializers import ClassesSerializer, SubjectSerializer
+from .serializers import ClassBelongsSerializer, ClassesSerializer, SubjectSerializer
 from .models import Classes, Subject
 
 # Create your views here.
@@ -72,5 +72,54 @@ def subject(request, id=None):
         return Response(error_return('wrong_request'))
 
 
+@api_view(["GET", "POST", "PUT", "PATCH"])
+@permission_classes([AllowAny])
+def classe(request, id=None):
+    data = request.data
+    if id:
+        try:
+            classe = Classes.objects.get(pk=id)
+        except:
+            return Response(error_return([f'No class with {id}']), status=status.HTTP_400_BAD_REQUEST)
+    if request.method == "GET":
+        try:
+            query = request.query_params["search"]
+            if id:
+                serializer = ClassBelongsSerializer(classe)
+                return Response(data_return(serializer.data, "class"), status=status.HTTP_200_OK)
+            elif query:
+                classes = Classes.objects.filter(title__icontains=query)
+                serializer = ClassesSerializer(classes, many=True, status=status.HTTP_200_OK)
+                return Response(data_return(serializer.data, "class"))
+            else:
+                classes = Classes.objects.all()
+                serializer = ClassesSerializer(classes, many=True)
+                return Response(data_return(serializer.data, "class"), status=status.HTTP_200_OK)
+        except:
+            return Response(error_return([f'wrong_query {request.query_params.dict()}']), status= status.HTTP_400_BAD_REQUEST)
+
+    if request.method == "POST":
+        serializer = ClassesSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"data": serializer.data}, status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                error_return(serializer.data, 'class'), status=status.HTTP_400_BAD_REQUEST
+            )
+
+    if id and request.method == "PUT" or id and request.method == "PATCH":
+        serializer = ClassesSerializer(subject, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data_return(serializer.data, "class"))
+        return Response(error_return(serializer.errors), status=status.HTTP_202_ACCEPTED)
+    if id and request.method == "DELETE":
+        classe.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(error_return('wrong_request'))
 
 
