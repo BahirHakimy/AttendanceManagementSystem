@@ -10,7 +10,8 @@ class ClassesSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         split_department = validated_data["department"].split(' ')
         short_department = split_department[0][0] + split_department[1][0]
-        validated_data["name"] = short_department + "-"  + validated_data["class_start_date"] + "-" + validated_data["gender"]
+        date = str(validated_data['date']).split('-')[0]
+        validated_data["name"] = short_department + "-"  + date + "-" + validated_data["gender"]
         return super().create(validated_data)
 
 class SubjectSerializer(serializers.ModelSerializer):
