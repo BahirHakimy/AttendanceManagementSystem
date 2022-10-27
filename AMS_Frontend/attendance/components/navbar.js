@@ -14,33 +14,33 @@ const Navbar = () => {
         <Image src={ku4Admin} height={30} width={90} alt="logo" />
       </div>
       {/* subjects  */}
-      <Link href={"/"}>
+      <Link href={""}>
         <a className="flex items-center text-white gap-5 w-full  hover:bg-cyan-500 px-3 py-1 ">
-          <Image src={subjectIcon} height={40} width={40} />
+          <Image src={subjectIcon} height={40} width={40} alt="subject Panel" />
           <span>Subjects Panel</span>
         </a>
       </Link>
 
       {/* Classroom */}
-      <Link href={"/"}>
+      <Link href={""}>
         <a className="flex items-center text-white gap-5 w-full hover:bg-cyan-500 px-3 py-1 ">
-          <Image src={classIcon} height={40} width={40} />
+          <Image src={classIcon} height={40} width={40} alt="Classes Panel"/>
           <span>Classes Panel</span>
         </a>
       </Link>
 
       {/* Students */}
-      <Link href={"/"}>
+      <Link href={""}>
         <a className="flex items-center text-white gap-5 w-full hover:bg-cyan-500 px-3 py-1 ">
-          <Image src={studentIcon} height={40} width={40} />
+          <Image src={studentIcon} height={40} width={40} alt="Students Panel" />
           <span>Students Panel</span>
         </a>
       </Link>
 
       {/* teachers */}
-      <Link href={"/"}>
+      <Link href={"/admin/teachers"}>
         <a className="flex items-center text-white gap-5 w-full hover:bg-cyan-500 px-3 py-1">
-          <Image src={teacherIcon} height={40} width={40} />
+          <Image src={teacherIcon} height={40} width={40} alt="Teachers Panel" />
           <span>Teachers Panel</span>
         </a>
       </Link>

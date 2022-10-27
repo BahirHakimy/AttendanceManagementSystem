@@ -1,6 +1,3 @@
-// two columns grid for it
-// svg and the text
-// adding the formik and adding the form
 import { Formik, Form, Field } from "formik";
 import Image from "next/image";
 import ku4 from "../public/ku4.svg";

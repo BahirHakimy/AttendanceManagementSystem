@@ -25,12 +25,14 @@ const DisplayPanel = () => {
             source={bookColored}
             title="Subjects Panel"
             desc="Add, Delete or Update Subjects"
+            path="subjects"
           />
 
           <Card
             source={classroomColored}
             title="Classroom Panel"
             desc="See through Classes and control them"
+            path="classes"
           />
         </div>
         {/* student and teacher */}
@@ -40,12 +42,14 @@ const DisplayPanel = () => {
             source={studentColored}
             title="Students Panel"
             desc="Manage and Search through Student list"
+            path="students"
           />
           {/* teacher Card */}
           <Card
             source={teacherColored}
             title="Teachers Panel"
             desc="Manage and Search through Teachers list"
+            path="teachers"
           />
         </div>
       </div>

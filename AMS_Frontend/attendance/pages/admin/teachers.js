@@ -1,12 +1,15 @@
-import { useRouter } from 'next/router'
-import React from 'react'
+import Navbar from "../../components/navbar";
+import TeacherDisplayPanel from "../../components/teachersDisplayPanel";
 
 const TeacherPanel = () => {
-    const router = useRouter();
-    console.log(router);
   return (
-    <div>TeacherPanel</div>
-  )
-}
+    <div className="flex">
+      {/* navbar  */}
+      <Navbar />
+      {/* teachers display panel  */}
+      <TeacherDisplayPanel/>
+    </div>
+  );
+};
 
-export default TeacherPanel
+export default TeacherPanel;
