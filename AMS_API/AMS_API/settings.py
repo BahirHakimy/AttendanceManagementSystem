@@ -31,6 +31,9 @@ ROOT_URLCONF = "AMS_API.urls"
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
+MEDIA_URL = "media/"
+STATIC_ROOT = BASE_DIR / "statics"
+MEDIA_ROOT = BASE_DIR / "media"
 
 
 # Default primary key field type
@@ -47,7 +50,7 @@ DATABASES = {
 }
 
 ## Authentication
-
+AUTH_USER_MODEL = "users.CustomUser"
 # Rest Framework
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -68,6 +71,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "users.apps.UsersConfig",
+    "subject_class.apps.SubjectClassConfig",
 ]
 
 MIDDLEWARE = [
