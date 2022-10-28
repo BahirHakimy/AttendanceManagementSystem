@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from uritemplate import partial
 from .serializers import ClassBelongsSerializer, ClassesSerializer, SubjectSerializer
 from .models import Classes, Subject
 
@@ -30,22 +31,22 @@ def subject(request, id=None):
         except:
             return Response(error_return([f'No subject with {id}']), status=status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
-        # try:
-        query = request.query_params.get("search")
-        print(query)
-        if id:
-            serializer = SubjectSerializer(subject)
-            return Response(data_return(serializer.data, "subject"), status=status.HTTP_200_OK)
-        elif query:
-            subjects = Subject.objects.filter(title__icontains=query)
-            serializer = SubjectSerializer(subjects, many=True)
-            return Response(data_return(serializer.data, "subject"), status=status.HTTP_200_OK)
-        else:
-            subjects = Subject.objects.all()
-            serializer = SubjectSerializer(subjects, many=True)
-            return Response(data_return(serializer.data, "subject"), status=status.HTTP_200_OK)
-        # except:
-        #     return Response(error_return([f'wrong_query {request.query_params.dict()}']), status= status.HTTP_400_BAD_REQUEST)
+        try:
+            query = request.query_params
+            if id:
+                serializer = SubjectSerializer(subject)
+                return Response(data_return(serializer.data, "subject"), status=status.HTTP_200_OK)
+            elif len(query):
+                query = query['search']
+                subjects = Subject.objects.filter(title__icontains=query)
+                serializer = SubjectSerializer(subjects, many=True)
+                return Response(data_return(serializer.data, "subject"), status=status.HTTP_200_OK)
+            else:
+                subjects = Subject.objects.all()
+                serializer = SubjectSerializer(subjects, many=True)
+                return Response(data_return(serializer.data, "subject"), status=status.HTTP_200_OK)
+        except:
+            return Response(error_return([f'wrong_query {request.query_params.dict()}']), status= status.HTTP_400_BAD_REQUEST)
 
     if request.method == "POST":
         serializerSubject = SubjectSerializer(data=data)
@@ -83,16 +84,17 @@ def classe(request, id=None):
         except:
             return Response(error_return([f'No class with {id}']), status=status.HTTP_400_BAD_REQUEST)
     if request.method == "GET":
+        query = request.query_params
         try:
             if id:
                 serializer = ClassBelongsSerializer(classe)
                 return Response(data_return(serializer.data, "class"), status=status.HTTP_200_OK)
-            elif query != '':
-                query = request.query_params["search"]
-                classes = Classes.objects.filter(title__icontains=query)
+            elif len(query):
+                query = query['search']
+                classes = Classes.objects.filter(name__icontains=query)
                 serializer = ClassesSerializer(
-                    classes, many=True, status=status.HTTP_200_OK)
-                return Response(data_return(serializer.data, "class"))
+                    classes, many=True)
+                return Response(data_return(serializer.data, "class"), status=status.HTTP_200_OK)
             else:
                 classes = Classes.objects.all()
                 serializer = ClassesSerializer(classes, many=True)
@@ -113,7 +115,7 @@ def classe(request, id=None):
             )
 
     if id and request.method == "PUT" or id and request.method == "PATCH":
-        serializer = ClassesSerializer(classe, data=data)
+        serializer = ClassesSerializer(classe, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(data_return(serializer.data, "class"))
