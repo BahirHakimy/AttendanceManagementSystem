@@ -7,7 +7,7 @@ const TeacherPanel = ({ data }) => {
     <div className="flex">
       {/* navbar  */}
       <Navbar />
-      {/* teachers display panel   */}
+      {/* teachers display panel*/}
       <TeacherDisplayPanel data={data} />
     </div>
   );
