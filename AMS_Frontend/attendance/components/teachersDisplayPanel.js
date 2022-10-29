@@ -3,7 +3,7 @@ import Image from "next/image";
 import KuLogo from "../public/KuLogo.jpg";
 import { Formik, Form, Field } from "formik";
 import { FcSearch } from "react-icons/fc";
-import { BsCardList, BsFillPersonLinesFill } from "react-icons/bs";
+import { BsCardList, BsFillPersonLinesFill, BsPersonPlusFill } from "react-icons/bs";
 import { useState } from "react";
 import TableCellMaker from "./TableCellMakerComponent";
 import CardTypeCellMaker from "./cardTypeCellMaker";
@@ -27,7 +27,10 @@ const TeacherDisplayPanel = ({ data }) => {
       {/* second row contains the search bar the filter buttons   */}
       <div className="flex justify-between mb-2 ">
         {/* search bar  */}
-        <div className=" relative order-2">
+        <div className="flex gap-5 items-center relative order-2">
+          {/* add teachers button */}
+        <BsPersonPlusFill size={35} className="mt-5" />
+
           {/* input field */}
           <Formik initialValues={{ searchValue: ""}}>
             <Form>
