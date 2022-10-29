@@ -24,12 +24,7 @@ class Classes(models.Model):
     gender = models.CharField(max_length=2, choices=GENDER_CHOISES)
 
     def __str__(self) -> str:
-        split_department = self.department.split(" ")
-        short_department = split_department[0][0] + split_department[1][0]
-        class_name = (
-            short_department + "-" + str(self.class_start_date) + "-" + self.gender
-        )
-        return class_name
+        return self.name
 
 
 class Subject(models.Model):
