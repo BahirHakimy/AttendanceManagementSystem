@@ -67,7 +67,7 @@ def subject(request, id=None):
         if serializerSubject.is_valid():
             serializerSubject.save()
             return Response(
-                {"data": serializerSubject.data}, status=status.HTTP_201_CREATED
+                data_return(serializerSubject.data, 'subject'), status=status.HTTP_201_CREATED
             )
         else:
             return Response(
@@ -133,7 +133,7 @@ def classe(request, id=None):
         serializer = ClassesSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+            return Response(data_return(serializer.data, 'class'), status=status.HTTP_201_CREATED)
         else:
             return Response(
                 error_return(serializer.errors, "class"),
@@ -184,7 +184,7 @@ def subject_class_info(request, id=None):
         serializer = InfoSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+            return Response(data_return(serializer.data, 'info'), status=status.HTTP_201_CREATED)
         else:
             return Response(
                 error_return(serializer.errors),
@@ -236,7 +236,7 @@ def time_table(request, id=None):
         serializer = TimeTableSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+            return Response(data_return(serializer.data, 'timetable'), status=status.HTTP_201_CREATED)
         else:
             return Response(
                 error_return(serializer.errors),

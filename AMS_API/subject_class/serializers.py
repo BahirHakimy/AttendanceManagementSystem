@@ -1,6 +1,5 @@
-
-from django.forms import CharField
 from rest_framework import serializers
+from users.serializers import TeacherSerializer
 from users.serializers import StudentSerializer
 from users.models import Student
 from .models import Classes, Subject, SubjectClassTeacherInfo, TimeTable
@@ -54,11 +53,14 @@ class ClassBelongsSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'students']
 
 
-class InfoSerializer(serializers.ModelSerializer):
+class InfoSerializer(serializers.ModelSerializer):   
+    classes = ClassesSerializer()
+    subject = SubjectSerializer()
+    teacher = TeacherSerializer()
 
     class Meta:
         model = SubjectClassTeacherInfo
-        fields = ['id', 'subject', 'classes', 'teacher']
+        fields = ['id', 'classes', 'subject', 'teacher']
         read_only_fields = ['id']
 
 
@@ -66,5 +68,5 @@ class TimeTableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TimeTable
-        fields = ['id', 'subject_class_teacher_info', 'day_of_week', 'cridet', 'classes']
+        fields = ['id', 'subject_class_teacher_info', 'day_of_week', 'cridet']
 
