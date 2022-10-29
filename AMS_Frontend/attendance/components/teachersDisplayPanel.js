@@ -29,7 +29,7 @@ const TeacherDisplayPanel = ({ data }) => {
         {/* search bar  */}
         <div className=" relative order-2">
           {/* input field */}
-          <Formik initialValues={{ searchValue: "" }}>
+          <Formik initialValues={{ searchValue: ""}}>
             <Form>
               {/* <label htmlFor="searchValue"></label> */}
               <div className="mt-5">
