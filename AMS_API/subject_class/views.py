@@ -4,14 +4,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .serializers import ClassBelongsSerializer, ClassesSerializer, InfoSerializer, SubjectSerializer
-from .models import Classes, Subject, SubjectClassTeacherInfo
+from .serializers import ClassBelongsSerializer, ClassesSerializer, InfoSerializer, SubjectSerializer, TimeTableSerializer
+from .models import Classes, Subject, SubjectClassTeacherInfo, TimeTable
 
 # Create your views here.
 
 
 def data_return(data, data_name=None):
-    data_model = {"data": {data_name: data}}
+    if data_name:
+        data_model = {"data": {data_name: data}}
+    else:
+        data_model = {"data": {data}}
     return data_model
 
 
@@ -20,7 +23,7 @@ def error_return(error):
     return error_model
 
 
-@api_view(["GET", "POST", "PUT", "PATCH"])
+@api_view(["GET", "POST", "PUT", "PATCH", "DELETE"])
 @permission_classes([AllowAny])
 def subject(request, id=None):
     data = request.data
@@ -87,7 +90,7 @@ def subject(request, id=None):
         return Response(error_return("wrong_request"))
 
 
-@api_view(["GET", "POST", "PUT", "PATCH"])
+@api_view(["GET", "POST", "PUT", "PATCH", "DELETE"])
 @permission_classes([AllowAny])
 def classe(request, id=None):
     data = request.data
@@ -199,6 +202,58 @@ def subject_class_info(request, id=None):
 
     if id and request.method == "DELETE":
         info.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(error_return("wrong_request"))
+
+
+@api_view(["GET", "POST", "PUT", "PATCH", "DELETE"])
+@permission_classes([AllowAny])
+def time_table(request, id=None):
+    data = request.data
+    if id:
+        try:
+            timetable = TimeTable.objects.get(pk=id)
+        except:
+            return Response(
+                error_return([f"No data with {id}"]),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    if request.method == "GET":
+        if id:
+            serializer = TimeTableSerializer(timetable)
+            return Response(
+                data_return(serializer.data, "timetable"), status=status.HTTP_200_OK
+            )
+        else:
+            classes = TimeTable.objects.all()
+            serializer = TimeTableSerializer(classes, many=True)
+            return Response(
+                data_return(serializer.data, "timetable"), status=status.HTTP_200_OK
+            )
+
+    if request.method == "POST":
+        serializer = TimeTableSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                error_return(serializer.errors),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    
+    if id and request.method == "PUT" or id and request.method == "PATCH":
+        serializer = TimeTableSerializer(timetable, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data_return(serializer.data, "timetable"))
+        return Response(
+            error_return(serializer.errors), status=status.HTTP_202_ACCEPTED
+        )
+
+    if id and request.method == "DELETE":
+        timetable.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     else:
         return Response(error_return("wrong_request"))

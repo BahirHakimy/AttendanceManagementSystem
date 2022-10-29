@@ -60,5 +60,5 @@ class TimeTable(models.Model):
     subject_class_teacher_info = models.ForeignKey(
         SubjectClassTeacherInfo, on_delete=models.CASCADE
     )
-    Day_of_week = models.CharField(max_length=1, choices=WEEK_DAYS)
+    day_of_week = models.CharField(max_length=1, choices=WEEK_DAYS)
     cridet = models.IntegerField(choices=CRIDET_CHOISES)

@@ -8,4 +8,6 @@ urlpatterns = [
     path('class/<int:id>', views.classe),
     path('', views.subject_class_info),
     path('<int:id>', views.subject_class_info),
+    path('time-table', views.time_table),
+    path('time-table/<int:id>', views.time_table),
 ]

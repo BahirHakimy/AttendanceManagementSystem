@@ -3,7 +3,7 @@ from django.forms import CharField
 from rest_framework import serializers
 from users.serializers import StudentSerializer
 from users.models import Student
-from .models import Classes, Subject, SubjectClassTeacherInfo
+from .models import Classes, Subject, SubjectClassTeacherInfo, TimeTable
 
 class ClassesSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=10, read_only=True)
@@ -60,3 +60,11 @@ class InfoSerializer(serializers.ModelSerializer):
         model = SubjectClassTeacherInfo
         fields = ['id', 'subject', 'classes', 'teacher']
         read_only_fields = ['id']
+
+
+class TimeTableSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TimeTable
+        fields = ['id', 'subject_class_teacher_info', 'day_of_week', 'cridet', 'classes']
+
