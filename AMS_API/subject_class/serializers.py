@@ -1,8 +1,9 @@
 
+from django.forms import CharField
 from rest_framework import serializers
 from users.serializers import StudentSerializer
 from users.models import Student
-from .models import Classes, Subject
+from .models import Classes, Subject, SubjectClassTeacherInfo
 
 class ClassesSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=10, read_only=True)
@@ -36,7 +37,8 @@ class ClassesSerializer(serializers.ModelSerializer):
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
-        fields = ['title']
+        fields = ['id', 'title']
+        read_only_fields = ['id']
 
 class ClassBelongsSerializer(serializers.ModelSerializer):
     students = serializers.SerializerMethodField()
@@ -51,3 +53,10 @@ class ClassBelongsSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'floor', 'semester', 'department', 'room_no', 'class_start_date', 'gender', 'students']
         read_only_fields = ['id', 'students']
 
+
+class InfoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SubjectClassTeacherInfo
+        fields = ['id', 'subject', 'classes', 'teacher']
+        read_only_fields = ['id']
