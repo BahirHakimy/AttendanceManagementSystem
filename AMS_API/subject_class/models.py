@@ -40,7 +40,7 @@ class SubjectClassTeacherInfo(models.Model):
     teacher = models.ForeignKey("users.Teacher", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return self.classes + "-" + self.subject + "-" + self.teacher
+        return self.classes.name + "-" + self.subject.title + "$" + self.teacher.user.get_full_name()
 
 
 class Attendance(models.Model):
