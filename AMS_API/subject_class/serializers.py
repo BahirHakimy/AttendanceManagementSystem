@@ -53,9 +53,9 @@ class ClassBelongsSerializer(serializers.ModelSerializer):
 
 
 class InfoSerializer(serializers.ModelSerializer):   
-    classes = ClassesSerializer()
-    subject = SubjectSerializer()
-    teacher = TeacherSerializer()
+    # classes = ClassesSerializer()
+    # subject = SubjectSerializer()
+    # teacher = TeacherSerializer()
 
     class Meta:
         model = SubjectClassTeacherInfo
@@ -69,10 +69,16 @@ class TimeTableSerializer(serializers.ModelSerializer):
         model = TimeTable
         fields = ['id', 'subject_class_teacher_info', 'day_of_week', 'cridet']
 
-class AttendanceSerializer(serializers.ModelSerializer):
+class GetAttendanceSerializer(serializers.ModelSerializer):
     student = StudentSerializer()
-    # subject_class_teacher_info = InfoSerializer()
     class Meta:
         model = Attendance
-        fields = ['id', 'student', 'subject_class_teacher_info', 'isPresent', 'date']
+        fields = ['id', 'student', 'subject_class_teacher_info', 'isPresent', 'date', 'cridet']
+
+
+class PostAttendanceSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Attendance
+        fields = ['id', 'student', 'subject_class_teacher_info', 'isPresent', 'date', 'cridet']
 
