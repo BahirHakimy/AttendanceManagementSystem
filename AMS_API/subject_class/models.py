@@ -1,4 +1,4 @@
-from random import choices
+import datetime
 from django.db import models
 
 # Create your models here.
@@ -50,7 +50,7 @@ class Attendance(models.Model):
     )
     isPresent = models.BooleanField()
     date = models.DateField()
-    cridet = models.IntegerField(choices=CRIDET_CHOISES)
+    cridet = models.CharField(max_length= 1, choices=CRIDET_CHOISES)
 
     def __str__(self) -> str:
         return super().__str__()
@@ -61,4 +61,4 @@ class TimeTable(models.Model):
         SubjectClassTeacherInfo, on_delete=models.CASCADE
     )
     day_of_week = models.CharField(max_length=1, choices=WEEK_DAYS)
-    cridet = models.IntegerField(choices=CRIDET_CHOISES)
+    cridet = models.CharField(max_length= 1, choices=CRIDET_CHOISES)

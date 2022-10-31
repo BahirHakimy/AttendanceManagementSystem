@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .serializers import ClassBelongsSerializer, ClassesSerializer, InfoSerializer, SubjectSerializer, TimeTableSerializer
-from .models import Classes, Subject, SubjectClassTeacherInfo, TimeTable
+from .serializers import AttendanceSerializer, ClassBelongsSerializer, ClassesSerializer, InfoSerializer, SubjectSerializer, TimeTableSerializer
+from .models import Attendance, Classes, Subject, SubjectClassTeacherInfo, TimeTable
 
 # Create your views here.
 
@@ -257,3 +257,36 @@ def time_table(request, id=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
     else:
         return Response(error_return("wrong_request"))
+
+
+@api_view(["GET", "POST", "PUT", "PATCH", "DELETE"])
+@permission_classes([AllowAny])
+def attendance(request, cla=None, sub=None):
+    data = request.data
+    if request.method == "GET":
+        if cla and sub:
+            info = SubjectClassTeacherInfo.objects.filter(classes=cla).get(subject=sub)
+            attendance = Attendance.objects.filter(subject_class_teacher_info=info.id)
+            serializer = AttendanceSerializer(attendance, many=True)
+            return Response(
+                data_return(serializer.data, "attendance"), status=status.HTTP_200_OK
+            )
+        else:
+            classes = Attendance.objects.all()
+            serializer = AttendanceSerializer(classes, many=True)
+            return Response(
+                data_return(serializer.data, "timetable"), status=status.HTTP_200_OK
+            )
+
+    if request.method == "POST":
+        serializer = AttendanceSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data_return(serializer.data, 'timetable'), status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                error_return(serializer.errors),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+

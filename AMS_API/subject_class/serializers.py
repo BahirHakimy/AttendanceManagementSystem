@@ -1,8 +1,7 @@
 from rest_framework import serializers
-from users.serializers import TeacherSerializer
-from users.serializers import StudentSerializer
+from users.serializers import TeacherSerializer, StudentSerializer
 from users.models import Student
-from .models import Classes, Subject, SubjectClassTeacherInfo, TimeTable
+from .models import Attendance, Classes, Subject, SubjectClassTeacherInfo, TimeTable
 
 class ClassesSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=10, read_only=True)
@@ -69,4 +68,11 @@ class TimeTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeTable
         fields = ['id', 'subject_class_teacher_info', 'day_of_week', 'cridet']
+
+class AttendanceSerializer(serializers.ModelSerializer):
+    student = StudentSerializer()
+    # subject_class_teacher_info = InfoSerializer()
+    class Meta:
+        model = Attendance
+        fields = ['id', 'student', 'subject_class_teacher_info', 'isPresent', 'date']
 
