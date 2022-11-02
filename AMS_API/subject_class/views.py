@@ -259,6 +259,23 @@ def time_table(request, id=None):
         return Response(error_return("wrong_request"))
 
 
+def attend(data, cla, sub):
+    info = SubjectClassTeacherInfo.objects.filter(classes=cla).get(subject=sub)
+    attendance = Attendance.objects.filter(subject_class_teacher_info=info.id)
+    timetable = TimeTable.objects.filter(subject_class_teacher_info=info.id)
+    for i in timetable:
+        if i.is_editable(attendance, data['date']):
+            data.update({'subject_class_teacher_info': info.id})
+            serializer = PostAttendanceSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(data_return(serializer.data, 'attendance'), status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                error_return({'date': 'non_editable_at_this_time'}),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 @api_view(["GET", "POST", "PUT", "PATCH", "DELETE"])
 @permission_classes([AllowAny])
 def attendance(request, cla=None, sub=None):
@@ -266,10 +283,7 @@ def attendance(request, cla=None, sub=None):
     if request.method == "GET":
         if cla and sub:
             info = SubjectClassTeacherInfo.objects.filter(classes=cla).get(subject=sub)
-            a = TimeTable.objects.filter(subject_class_teacher_info=info.id)
             attendance = Attendance.objects.filter(subject_class_teacher_info=info.id)
-            a[0].is_editable(attendance)
-            a[1].is_editable(attendance)
             serializer = GetAttendanceSerializer(attendance, many=True)
             return Response(
                 data_return(serializer.data, "attendance"), status=status.HTTP_200_OK
@@ -283,21 +297,15 @@ def attendance(request, cla=None, sub=None):
 
     if request.method == "POST":
         if cla and sub:
-            print(data)
-            info = SubjectClassTeacherInfo.objects.filter(classes=cla).get(subject=sub)
-            attendance = Attendance.objects.filter(subject_class_teacher_info=info.id)
-            a = TimeTable.objects.filter(subject_class_teacher_info=info.id)
-            print(a[0].is_editable(attendance, data['date']))
-            print(a[1].is_editable(attendance, data['date']))
-            data.update({'subject_class_teacher_info': info.id})
-            serializer = PostAttendanceSerializer(data=data)
-            if serializer.is_valid():
-                # serializer.save()
-                return Response(data_return(serializer.data, 'attendance'), status=status.HTTP_201_CREATED)
+            if type(data) == list:
+                for i in range(len(data)):
+                    return attend(data[i], cla, sub)
             else:
-                return Response(
-                    error_return(serializer.errors),
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return attend(data, cla, sub)
+        else:
+            return Response(
+                error_return(serializer.errors),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
