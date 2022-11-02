@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .serializers import ClassBelongsSerializer, ClassesSerializer, GetAttendanceSerializer, InfoSerializer, PostAttendanceSerializer, SubjectSerializer, TimeTableSerializer
+from .serializers import ClassBelongsSerializer, ClassesSerializer, GetAttendanceSerializer, GetInfoSerializer, PostAttendanceSerializer, PostInfoSerializer, SubjectSerializer, TimeTableSerializer
 from .models import Attendance, Classes, Subject, SubjectClassTeacherInfo, TimeTable
 
 # Create your views here.
@@ -169,19 +169,19 @@ def subject_class_info(request, id=None):
             )
     if request.method == "GET":
         if id:
-            serializer = InfoSerializer(info)
+            serializer = GetInfoSerializer(info)
             return Response(
                 data_return(serializer.data, "info"), status=status.HTTP_200_OK
             )
         else:
             classes = SubjectClassTeacherInfo.objects.all()
-            serializer = InfoSerializer(classes, many=True)
+            serializer = GetInfoSerializer(classes, many=True)
             return Response(
                 data_return(serializer.data, "info"), status=status.HTTP_200_OK
             )
 
     if request.method == "POST":
-        serializer = InfoSerializer(data=data)
+        serializer = PostInfoSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(data_return(serializer.data, 'info'), status=status.HTTP_201_CREATED)
@@ -192,7 +192,7 @@ def subject_class_info(request, id=None):
             )
     
     if id and request.method == "PUT" or id and request.method == "PATCH":
-        serializer = InfoSerializer(info, data=data, partial=True)
+        serializer = PostInfoSerializer(info, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(data_return(serializer.data, "info"))
@@ -266,7 +266,10 @@ def attendance(request, cla=None, sub=None):
     if request.method == "GET":
         if cla and sub:
             info = SubjectClassTeacherInfo.objects.filter(classes=cla).get(subject=sub)
+            a = TimeTable.objects.filter(subject_class_teacher_info=info.id)
             attendance = Attendance.objects.filter(subject_class_teacher_info=info.id)
+            a[0].is_editable(attendance)
+            a[1].is_editable(attendance)
             serializer = GetAttendanceSerializer(attendance, many=True)
             return Response(
                 data_return(serializer.data, "attendance"), status=status.HTTP_200_OK
@@ -275,18 +278,22 @@ def attendance(request, cla=None, sub=None):
             classes = Attendance.objects.all()
             serializer = GetAttendanceSerializer(classes, many=True)
             return Response(
-                data_return(serializer.data, "timetable"), status=status.HTTP_200_OK
+                data_return(serializer.data, "attendance"), status=status.HTTP_200_OK
             )
 
     if request.method == "POST":
         if cla and sub:
             print(data)
             info = SubjectClassTeacherInfo.objects.filter(classes=cla).get(subject=sub)
+            attendance = Attendance.objects.filter(subject_class_teacher_info=info.id)
+            a = TimeTable.objects.filter(subject_class_teacher_info=info.id)
+            print(a[0].is_editable(attendance, data['date']))
+            print(a[1].is_editable(attendance, data['date']))
             data.update({'subject_class_teacher_info': info.id})
             serializer = PostAttendanceSerializer(data=data)
             if serializer.is_valid():
-                serializer.save()
-                return Response(data_return(serializer.data, 'timetable'), status=status.HTTP_201_CREATED)
+                # serializer.save()
+                return Response(data_return(serializer.data, 'attendance'), status=status.HTTP_201_CREATED)
             else:
                 return Response(
                     error_return(serializer.errors),

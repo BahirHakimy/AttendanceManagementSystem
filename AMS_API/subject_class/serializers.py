@@ -52,15 +52,22 @@ class ClassBelongsSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'students']
 
 
-class InfoSerializer(serializers.ModelSerializer):   
-    # classes = ClassesSerializer()
-    # subject = SubjectSerializer()
-    # teacher = TeacherSerializer()
+class GetInfoSerializer(serializers.ModelSerializer):
 
+    classes = ClassesSerializer()
+    subject = SubjectSerializer()
+    teacher = TeacherSerializer
+    class Meta:
+        model = SubjectClassTeacherInfo
+        fields = ['id', 'classes', 'subject', 'teacher']
+        read_only_fields = ['id', 'classes', 'subject', 'teacher']
+
+class PostInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubjectClassTeacherInfo
         fields = ['id', 'classes', 'subject', 'teacher']
         read_only_fields = ['id']
+
 
 
 class TimeTableSerializer(serializers.ModelSerializer):
@@ -77,7 +84,7 @@ class GetAttendanceSerializer(serializers.ModelSerializer):
 
 
 class PostAttendanceSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Attendance
         fields = ['id', 'student', 'subject_class_teacher_info', 'isPresent', 'date', 'cridet']

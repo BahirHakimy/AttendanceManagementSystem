@@ -62,3 +62,13 @@ class TimeTable(models.Model):
     )
     day_of_week = models.CharField(max_length=1, choices=WEEK_DAYS)
     cridet = models.CharField(max_length= 1, choices=CRIDET_CHOISES)
+
+    def is_editable(self, attendance, newDate):
+        print(self.day_of_week)
+        print(newDate)
+        print(datetime.date(int(newDate.split('-')[0]), int(newDate.split('-')[1]), int(newDate.split('-')[2])) == datetime.date.today() - datetime.timedelta(hours=23))
+        for i in attendance:
+            already_attendance = Attendance.objects.filter(date=newDate)
+            if already_attendance:
+                return False
+            
